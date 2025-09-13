@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { editImage } from '../services/geminiService';
 import LoadingSpinner from './LoadingSpinner';
-import { UploadIcon, MagicWandIcon, TrashIcon } from './IconComponents';
+import { UploadIcon, MagicWandIcon, TrashIcon, DownloadIcon } from './IconComponents';
 
 const ImageEditor: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -77,6 +77,16 @@ const ImageEditor: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDownload = () => {
+    if (!editedImage) return;
+    const link = document.createElement('a');
+    link.href = editedImage;
+    link.download = 'edited-image.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const ImagePlaceholder = () => (
@@ -174,6 +184,17 @@ const ImageEditor: React.FC = () => {
           <h3 className="text-center text-xl font-semibold text-gray-300">الصورة المعدلة</h3>
           {isLoading && <div className="w-full h-64 md:h-96 flex items-center justify-center bg-gray-800/50 rounded-lg"><LoadingSpinner /></div>}
           {!isLoading && (editedImage ? <img src={editedImage} alt="Edited" className="w-full h-auto rounded-lg object-contain max-h-96" /> : <ImagePlaceholder />)}
+          {editedImage && !isLoading && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handleDownload}
+                className="flex items-center justify-center gap-2 px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105"
+              >
+                <DownloadIcon className="w-5 h-5" />
+                تحميل الصورة
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
